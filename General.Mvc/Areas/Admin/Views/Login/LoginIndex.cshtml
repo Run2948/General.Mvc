@@ -1,0 +1,169 @@
+﻿
+@{
+    Layout = null;
+}
+@model General.Entities.LoginModel
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8" />
+    <title>用户登录 - 系统管理</title>
+    <meta name="description" content="User login page" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/assets/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/assets/css/ace.min.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery.min.js"></script>
+</head>
+<body class="login-layout blur-login">
+    <div class="main-container">
+        <div class="main-content">
+            <div class="row">
+                <div class="col-sm-10 col-sm-offset-1">
+                    <div class="login-container">
+                        <div class="center">
+                            <h1>
+                                <i class="ace-icon green"></i>
+                                <span class="white" id="id-text2"></span>
+                            </h1>
+                            <h4 class="blue" id="id-company-text">&copy; </h4>
+                        </div>
+
+                        <div class="space-6"></div>
+
+                        <div class="position-relative">
+                            <div id="login-box" class="login-box visible widget-box no-border">
+                                <div class="widget-body">
+                                    <div class="widget-main">
+                                        <h4 class="header blue lighter bigger">
+                                            <i class="ace-icon fa fa-coffee green"></i>
+                                            请输入您的账号密码
+                                        </h4>
+
+                                        <div class="space-6"></div>
+                                        <form asp-route="adminLogin" method="post">
+                                            <input type="hidden" id="r_random" value="@Model.R" />
+                                            <fieldset>
+                                                <label class="block clearfix">
+                                                    <span class="block input-icon input-icon-right">
+                                                        @Html.TextBoxFor(m => m.Account, new { @class = "form-control", placeholder = "用户名" })
+                                                        <i class="ace-icon fa fa-user"></i>
+                                                    </span>
+                                                </label>
+
+                                                <label class="block clearfix">
+                                                    <span class="block input-icon input-icon-right">
+                                                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "密码" })
+                                                        <i class="ace-icon fa fa-lock"></i>
+                                                    </span>
+                                                </label>
+
+                                                <div class="space"></div>
+
+                                                <div class="clearfix">
+                                                    <label class="inline">
+                                                        <input type="checkbox" id="RememberMe" name="RememberMe" value="true" class="ace" />
+                                                        <span class="lbl"> 记住我</span>
+                                                    </label>
+                                                    <button type="button" id="myButton" data-loading-text="登录中..." class="width-35 pull-right btn btn-sm btn-primary">
+                                                        <i class="ace-icon fa fa-key"></i>
+                                                        <span class="bigger-110">登录</span>
+                                                    </button>
+                                                </div>
+                                                <div class="space-4"></div>
+                                            </fieldset>
+                                        </form>
+                                        <div class="social-or-login center">
+                                            <span class="bigger-110">登 录 提 示</span>
+                                        </div>
+                                        <div class="social-login">
+                                            <p id="error_msg">登录密码错误过多账号将被锁定</p>
+                                        </div>
+                                        <div class="space-6"></div>
+
+                                    </div><!-- /.widget-main -->
+
+                                </div><!-- /.widget-body -->
+                            </div><!-- /.login-box -->
+
+                        </div><!-- /.position-relative -->
+
+                    </div>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.main-content -->
+    </div><!-- /.main-container -->
+    <!-- basic scripts --> 
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/jquery.md5.js"></script>
+    <script>
+        $(function () {
+            $('#myButton').click(function () {
+                if ($('form').valid()) {
+                    var account = $('#Account').val();
+                    var password = $('#Password').val();
+                    var r = $('#r_random').val();
+                    $.get('@Url.RouteUrl("getSalt")?account=' + account, function (salt) {
+                        password = $.md5(password + salt);
+                        password = $.md5(password + r);
+                        $.post('@Url.RouteUrl("adminLogin")', { "Account": account, "Password": password }, function (data) {
+                            if (data.status) {
+                                $('#error_msg').html('登陆成功，正在进入系统...');
+                                window.location.href = '@Url.RouteUrl("mainIndex")';
+                            } else {
+                                $('#error_msg').html(data.message);
+                            }
+                         })
+
+                    });
+                }
+            });
+
+        });
+    </script>  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
