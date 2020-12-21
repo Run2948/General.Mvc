@@ -1,6 +1,6 @@
 ﻿using General.Entities;
 using General.Framework.Menu;
-using General.Services.Category;
+using General.Services.SysCategory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +13,11 @@ namespace General.Framework.Register
 {
     public class RegisterApplicationService : IRegisterApplicationService
     {
-        private ICategoryService _categoryService;
+        private readonly ISysCategoryService _sysCategoryService;
 
-        public RegisterApplicationService(ICategoryService categoryService)
+        public RegisterApplicationService(ISysCategoryService sysCategoryService)
         {
-            this._categoryService = categoryService;
+            this._sysCategoryService = sysCategoryService;
         }
 
         /// <summary>
@@ -26,10 +26,10 @@ namespace General.Framework.Register
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void initRegister()
         {
-            List<Entities.Category> list = new List<Entities.Category>();
+            List<Entities.SysCategory> list = new List<Entities.SysCategory>();
             FunctionManager.getFunctionLists().ForEach(item =>
             {
-                list.Add(new Entities.Category()
+                list.Add(new Entities.SysCategory()
                 {
                     Action = item.Action,
                     Controller = item.Controller,
@@ -45,7 +45,9 @@ namespace General.Framework.Register
                     ResouceID = item.ResouceID
                 });
             });
-            _categoryService.initCategory(list);
+            _sysCategoryService.initCategory(list);
+
+
         }
     }
 }

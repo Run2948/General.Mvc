@@ -10,3 +10,12 @@
 
 * 管理员账户：admin/123456
 
+**升级 ASP.NET Core 3.1：**
+
+需要旧版的同学，可以前往 Tag [v1.0](https://github.com/Run2948/General.Mvc/releases/tag/v1.0) 获取。
+
+* 升级了项目 .NET Core 版本到 3.1
+* 修复了一些无法兼容的语法和逻辑
+* 切换数据库为 MySQL 5.7.x
+* 引入 Autofac 重构了 GeneralEngine
+* 使用 CodeFirst 自动创建数据库

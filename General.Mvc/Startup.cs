@@ -2,26 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using General.Entities;
 using Microsoft.EntityFrameworkCore;
-using General.Services.Category;
 using General.Core;
 using General.Core.Extensions;
 using General.Core.Data;
-using General.Services.Setting;
-using General.Core.Librs;
 using General.Framework;
 using General.Framework.Infrastructure;
 using General.Framework.Security.Admin;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Caching.Memory;
 using General.Framework.Register;
+using Microsoft.Extensions.Hosting;
 
 namespace General.Mvc
 {
@@ -40,8 +38,7 @@ namespace General.Mvc
         {
             services.AddMvc();
 
-            //
-            services.AddDbContextPool<GeneralDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContextPool<GeneralDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddAuthentication(o =>
             {
@@ -55,7 +52,7 @@ namespace General.Mvc
 
             //程序集依赖注入
             services.AddAssembly("General.Services");
-             
+
             services.AddSession();
 
             //泛型注入到DI里面
@@ -65,46 +62,54 @@ namespace General.Mvc
             services.AddScoped<IAdminAuthService, AdminAuthService>();
             services.AddSingleton<IMemoryCache, MemoryCache>();
             services.AddSingleton<IRegisterApplicationService, RegisterApplicationService>();
-            //
-            EnginContext.Initialize(new GeneralEngine(services.BuildServiceProvider()));
-            ;
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            //
+            // EnginContext.Initialize(new GeneralEngine(services.BuildServiceProvider()));
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            // builder.Register(c => c.Resolve<GeneralDbContext>()).As<DbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseSession();
+
             app.UseStaticFiles();
+
+            app.UseRouting();
 
             app.UseAuthentication();
 
-            //
-            app.UseSession();
-
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute(
+                    name: "area",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
+                   name: "default",
+                   pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                  name: "areas",
-                  template: "{area:exists}/{controller=Login}/{action=Index}/{id?}"
-                );
-            });
+            #region Autofac依赖注入服务
+            // AutofacEngine.Container = app.ApplicationServices.GetAutofacRoot();
+            #endregion
+
+            EnginContext.Initialize(new GeneralEngine(app.ApplicationServices.GetAutofacRoot()));
+
             //初始化菜单
             EnginContext.Current.Resolve<IRegisterApplicationService>().initRegister();
         }

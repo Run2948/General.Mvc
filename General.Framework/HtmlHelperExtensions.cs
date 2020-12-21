@@ -21,9 +21,9 @@ namespace General.Framework
         /// <returns></returns>
         public static bool OwnPermission(this IHtmlHelper helper, string routeName)
         {
-           var _adminAuthSerivce = EnginContext.Current.Resolve<IAdminAuthService>();
-            return _adminAuthSerivce.authorize(routeName);
-        } 
+           var adminAuthService = EnginContext.Current.Resolve<IAdminAuthService>();
+            return adminAuthService.Authorize(routeName);
+        }
 
         /// <summary>
         /// 

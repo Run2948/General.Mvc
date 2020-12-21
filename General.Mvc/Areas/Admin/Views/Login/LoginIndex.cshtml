@@ -108,6 +108,7 @@
                     var r = $('#r_random').val();
                     $.get('@Url.RouteUrl("getSalt")?account=' + account, function (salt) {
                         password = $.md5(password + salt);
+                        //console.log(password);
                         password = $.md5(password + r);
                         $.post('@Url.RouteUrl("adminLogin")', { "Account": account, "Password": password }, function (data) {
                             if (data.status) {

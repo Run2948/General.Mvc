@@ -8,21 +8,21 @@
 }
 
 @functions {
-    public HtmlString RenderMenuItem(Category item, List<Category> aa)
+    public HtmlString RenderMenuItem(SysCategory item, List<SysCategory> aa)
     {
         string href = string.Empty;
-        if (!String.IsNullOrEmpty(item.RouteName))
+        if (!string.IsNullOrEmpty(item.RouteName))
         {
             href = Url.RouteUrl(item.RouteName);
         }
-        if (!String.IsNullOrEmpty(item.Controller) && !String.IsNullOrEmpty(item.Action))
+        if (!string.IsNullOrEmpty(item.Controller) && !string.IsNullOrEmpty(item.Action))
         {
             href = Url.Action(item.Action, item.Controller);
         }
 
         string s = @"<li id=" + item.ResouceID + " " + (Context.Request.Path.Value.Equals(href, StringComparison.InvariantCultureIgnoreCase) ? "class=active" : "") + ">";
         var childNodes = aa.Where(o => o.FatherResource == item.SysResource && o.IsMenu).OrderBy(o => o.Sort).ThenBy(o => o.Name).ToList();
-        s += @"<a href =" + (!String.IsNullOrEmpty(href) ? href : "javascript: ") + " " + (childNodes.Any() ? "class=dropdown-toggle" : "") + ">" +
+        s += @"<a href =" + (!string.IsNullOrEmpty(href) ? href : "javascript: ") + " " + (childNodes.Any() ? "class=dropdown-toggle" : "") + ">" +
                 "<i class=\"" + item.CssClass + "\"></i><span class=menu-text>" + item.Name + "</span>";
         if (childNodes.Any())
         {
@@ -52,10 +52,10 @@
 <div id="sidebar" class="sidebar responsive sidebar-fixed">
 
     @{
-        List<Category> list = workContext.Categories;
+        List<SysCategory> list = workContext.Categories;
         if (list != null)
         {
-            var nodes = list.Where(o => String.IsNullOrEmpty(o.FatherResource)).Where(o => o.IsMenu).OrderBy(o => o.Sort).ThenBy(o => o.Name).ToList();
+            var nodes = list.Where(o => string.IsNullOrEmpty(o.FatherResource)).Where(o => o.IsMenu).OrderBy(o => o.Sort).ThenBy(o => o.Name).ToList();
 
             <ul class="nav nav-list"> 
                 @if (nodes != null)

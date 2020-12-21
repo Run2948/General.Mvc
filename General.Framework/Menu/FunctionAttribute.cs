@@ -74,7 +74,7 @@ namespace General.Framework.Menu
         {
             get
             {
-                if (!String.IsNullOrEmpty(SysResource))
+                if (!string.IsNullOrEmpty(SysResource))
                     return EncryptorHelper.GetMD5(SysResource);
                 return "";
             }
@@ -93,7 +93,7 @@ namespace General.Framework.Menu
         {
             get
             {
-                if (!String.IsNullOrEmpty(FatherResource))
+                if (!string.IsNullOrEmpty(FatherResource))
                     return EncryptorHelper.GetMD5(FatherResource);
                 return "";
             }

@@ -18,13 +18,16 @@ namespace General.Services.SysUser
 
         private IRepository<Entities.SysUser> _sysUserRepository;
         private IRepository<Entities.SysUserToken> _sysUserTokenRepository;
+        private IRepository<Entities.SysUserLoginLog> _sysUserLogRepository;
 
 
         public SysUserService(IRepository<Entities.SysUser> sysUserRepository,
             IRepository<Entities.SysUserToken> sysUserTokenRepository,
+            IRepository<Entities.SysUserLoginLog> sysUserLogRepository,
             IMemoryCache memoryCache)
         {
             this._sysUserRepository = sysUserRepository;
+            this._sysUserLogRepository = sysUserLogRepository;
             this._memoryCache = memoryCache;
             this._sysUserTokenRepository = sysUserTokenRepository;
         }
@@ -62,23 +65,35 @@ namespace General.Services.SysUser
                 user.LastLoginTime = DateTime.Now;
                 user.LastIpAddress = "";
 
+                // _sysUserRepository.DbContext.SaveChanges();
+
                 //登录日志
-                user.SysUserLoginLogs.Add(new SysUserLoginLog()
+                var userLoginLog = new SysUserLoginLog()
                 {
                     Id = Guid.NewGuid(),
                     IpAddress = "",
+                    UserId = user.Id,
                     LoginTime = DateTime.Now,
                     Message = "登录：成功"
-                });
-                //单点登录,移除旧的登录token
+                };
+                // user.SysUserLoginLogs.Add(userLoginLog);
 
+                _sysUserLogRepository.insert(userLoginLog);
+                // _sysUserLogRepository.SaveChanges();
+
+                //单点登录,移除旧的登录token
                 var userToken = new SysUserToken()
                 {
                     Id = Guid.NewGuid(),
+                    SysUserId = user.Id,
                     ExpireTime = DateTime.Now.AddDays(15)
                 };
-                user.SysUserTokens.Add(userToken);
+
+                // user.SysUserTokens.Add(userToken);
+                _sysUserTokenRepository.insert(userToken);
+
                 _sysUserRepository.DbContext.SaveChanges();
+
                 return (true, "登录成功", userToken.Id.ToString(), user);
             }
             else
@@ -91,12 +106,15 @@ namespace General.Services.SysUser
                     LoginTime = DateTime.Now,
                     Message = "登录：密码错误"
                 });
+
                 user.LoginFailedNum++;
+
                 if (user.LoginFailedNum > 5)
                 {
                     user.LoginLock = true;
                     user.AllowLoginTime = DateTime.Now.AddHours(2);
                 }
+
                 _sysUserRepository.DbContext.SaveChanges();
             }
             return (false, "用户名或密码错误", null, null);
@@ -120,19 +138,17 @@ namespace General.Services.SysUser
         public Entities.SysUser getLogged(string token)
         {
             Entities.SysUserToken userToken = null;
-            Entities.SysUser sysUser = null; 
+            Entities.SysUser sysUser = null;
 
             _memoryCache.TryGetValue<Entities.SysUserToken>(token, out userToken);
-            if (userToken!=null)
+            if (userToken != null)
             {
-                _memoryCache.TryGetValue(String.Format(MODEL_KEY, userToken.SysUserId), out sysUser);
+                _memoryCache.TryGetValue(string.Format(MODEL_KEY, userToken.SysUserId), out sysUser);
             }
             if (sysUser != null)
                 return sysUser;
 
-            Guid tokenId = Guid.Empty;
-
-            if (Guid.TryParse(token, out tokenId))
+            if (Guid.TryParse(token, out var tokenId))
             {
                 var tokenItem = _sysUserTokenRepository.Table.Include(x => x.SysUser)
                      .FirstOrDefault(o => o.Id == tokenId);
@@ -140,7 +156,7 @@ namespace General.Services.SysUser
                 {
                     _memoryCache.Set(token, tokenItem, DateTimeOffset.Now.AddHours(4));
                     //缓存
-                    _memoryCache.Set(String.Format(MODEL_KEY, tokenItem.SysUserId), tokenItem.SysUser, DateTimeOffset.Now.AddHours(4));
+                    _memoryCache.Set(string.Format(MODEL_KEY, tokenItem.SysUserId), tokenItem.SysUser, DateTimeOffset.Now.AddHours(4));
                     return tokenItem.SysUser;
                 }
             }
@@ -159,7 +175,7 @@ namespace General.Services.SysUser
             var query = _sysUserRepository.Table.Where(o => !o.IsDeleted);
             if (arg != null)
             {
-                if (!String.IsNullOrEmpty(arg.q))
+                if (!string.IsNullOrEmpty(arg.q))
                     query = query.Where(o => o.Account.Contains(arg.q) || o.MobilePhone.Contains(arg.q) || o.Email.Contains(arg.q) || o.Name.Contains(arg.q));
                 if (arg.enabled.HasValue)
                     query = query.Where(o => o.Enabled == arg.enabled);
@@ -269,7 +285,7 @@ namespace General.Services.SysUser
         /// <param name="userId"></param>
         private void removeCacheUser(Guid userId)
         {
-            _memoryCache.Remove(String.Format(MODEL_KEY, userId));
+            _memoryCache.Remove(string.Format(MODEL_KEY, userId));
         }
     }
 }

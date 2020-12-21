@@ -7,10 +7,10 @@ using System.Text;
 
 namespace General.Entities
 {
-    [Table("Category")]
-    public class Category
+    [Table("SysCategory")]
+    public class SysCategory
     {
-        public Category()
+        public SysCategory()
         {
             SysPermissions = new HashSet<SysPermission>();
         }

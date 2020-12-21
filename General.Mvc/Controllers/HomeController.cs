@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using General.Mvc.Models;
 using General.Entities;
-using General.Services.Category;
+using General.Services.SysCategory;
 using General.Core;
 using General.Core.Data;
 using General.Framework.Controllers;

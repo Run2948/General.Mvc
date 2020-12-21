@@ -26,7 +26,7 @@ namespace General.Framework.Filters
         public void OnResourceExecuting(ResourceExecutingContext context)
         {
            var _adminAuthService = EnginContext.Current.Resolve<IAdminAuthService>();
-            var user = _adminAuthService.getCurrentUser();
+            var user = _adminAuthService.GetCurrentUser();
             if (user == null || !user.Enabled)
                 context.Result = new RedirectToRouteResult("adminLogin", new { returnUrl = context.HttpContext.Request.Path });
         }

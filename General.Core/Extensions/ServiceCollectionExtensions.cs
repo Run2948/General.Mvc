@@ -23,7 +23,7 @@ namespace General.Core.Extensions
             if (services == null)
                 throw new ArgumentNullException(nameof(services) + "为空");
 
-            if (String.IsNullOrEmpty(assemblyName))
+            if (string.IsNullOrEmpty(assemblyName))
                 throw new ArgumentNullException(nameof(assemblyName) + "为空");
 
             var assembly = RuntimeHelper.GetAssemblyByName(assemblyName);
@@ -33,12 +33,12 @@ namespace General.Core.Extensions
 
             var types = assembly.GetTypes();
             var list = types.Where(o => o.IsClass && !o.IsAbstract && !o.IsGenericType).ToList();
-            if (list == null && !list.Any())
+            if (!list.Any())
                 return;
             foreach (var type in list)
             {
-                var interfacesList = type.GetInterfaces();
-                if (interfacesList == null || !interfacesList.Any())
+                var interfacesList = type.GetInterfaces().ToList();
+                if (!interfacesList.Any())
                     continue;
                 var inter = interfacesList.First();
                 switch (serviceLifetime)
@@ -52,11 +52,10 @@ namespace General.Core.Extensions
                     case ServiceLifetime.Transient:
                         services.AddTransient(inter, type);
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(serviceLifetime), serviceLifetime, null);
                 }
             }
         }
-
-
-
     }
 }

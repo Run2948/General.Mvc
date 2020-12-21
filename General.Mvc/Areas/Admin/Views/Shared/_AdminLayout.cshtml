@@ -17,7 +17,7 @@
     <link href="/assets/css/bootstrap-editable.css" rel="stylesheet" />
     <link href="/assets/css/datepicker.css" rel="stylesheet" />
     <link href="~/css/site.css" rel="stylesheet" />
-    <script src="/assets/js/ace-extra.min.js"></script> 
+    <script src="/assets/js/ace-extra.min.js"></script>
     <script src="~/assets/js/jquery.min.js"></script>
 </head>
 <body class="no-skin">
@@ -37,15 +37,17 @@
                     </small>
                 </a>
             </div>
-            @{ Html.RenderPartial("_LoginPartial");}
+            <partial name="_LoginPartial" />
+            @*@Html.RenderPartial("_LoginPartial");*@
         </div>
     </div>
     <div class="main-container" id="main-container">
-        @{ Html.RenderPartial("_NavbarPartial");}
+        <partial name="_NavbarPartial" />
+        @*@Html.RenderPartial("_NavbarPartial");*@
         <div class="main-content">
             @RenderBody()
         </div>
-    </div> 
+    </div>
     <div class="footer">
         <div class="footer-inner">
             <!-- #section:basics/footer -->

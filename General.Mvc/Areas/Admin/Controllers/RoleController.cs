@@ -8,7 +8,7 @@ using General.Services.SysRole;
 using General.Framework.Menu;
 using General.Services.SysPermission;
 using General.Entities;
-using General.Services.Category;
+using General.Services.SysCategory;
 
 namespace General.Mvc.Areas.Admin.Controllers
 {
@@ -18,13 +18,13 @@ namespace General.Mvc.Areas.Admin.Controllers
 
         private ISysRoleService _sysRoleService;
         private ISysPermissionService _sysPermissionService;
-        private ICategoryService _categoryService;
+        private ISysCategoryService _sysCategoryService;
 
         public RoleController(ISysRoleService sysRoleService,
-            ICategoryService categoryService,
+            ISysCategoryService sysCategoryService,
             ISysPermissionService sysPermissionService)
         {
-            this._categoryService = categoryService;
+            this._sysCategoryService = sysCategoryService;
             this._sysRoleService = sysRoleService;
             this._sysPermissionService = sysPermissionService;
         }
@@ -103,7 +103,7 @@ namespace General.Mvc.Areas.Admin.Controllers
         public ActionResult RolePermission(Guid id)
         {
             RolePermissionViewModel model = new RolePermissionViewModel();
-            model.CategoryList = _categoryService.getAll();
+            model.CategoryList = _sysCategoryService.getAll();
             var roleList = _sysRoleService.getAllRoles();
             if (roleList != null && roleList.Any())
             {

@@ -6,17 +6,17 @@ using System.Linq;
 using General.Core.Data;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace General.Services.Category
+namespace General.Services.SysCategory
 {
-    public class CategoryService : ICategoryService
+    public class SysCategoryService : ISysCategoryService
     {
-        private const string MODEL_KEY = "General.services.category";
+        private const string MODEL_KEY = "General.services.sysCategory";
 
         private IMemoryCache _memoryCache;
-        private IRepository<Entities.Category> _categoryRepository;
+        private IRepository<Entities.SysCategory> _categoryRepository;
         private IRepository<Entities.SysPermission> _permissionRepository;
 
-        public CategoryService(IRepository<Entities.Category> categoryRepository,
+        public SysCategoryService(IRepository<Entities.SysCategory> categoryRepository,
             IMemoryCache memoryCache,
             IRepository<Entities.SysPermission> permissionRepository)
         {
@@ -29,7 +29,7 @@ namespace General.Services.Category
         /// 初始化保存方法
         /// </summary>
         /// <param name="list"></param>
-        public void initCategory(List<Entities.Category> list)
+        public void initCategory(List<Entities.SysCategory> list)
         {
             var oldList = _categoryRepository.Table.ToList();
             oldList.ForEach(del =>
@@ -75,10 +75,10 @@ namespace General.Services.Category
         /// 获取所有的菜单数据 并缓存
         /// </summary>
         /// <returns></returns>
-        public List<Entities.Category> getAll()
+        public List<Entities.SysCategory> getAll()
         {
-            List<Entities.Category> list = null;
-            _memoryCache.TryGetValue<List<Entities.Category>>(MODEL_KEY, out list);
+            List<Entities.SysCategory> list = null;
+            _memoryCache.TryGetValue<List<Entities.SysCategory>>(MODEL_KEY, out list);
             if (list != null)
                 return list;
             list = _categoryRepository.Table.ToList();

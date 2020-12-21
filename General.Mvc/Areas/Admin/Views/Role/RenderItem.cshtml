@@ -1,4 +1,4 @@
-﻿@model ValueTuple<General.Entities.Category,List<General.Entities.Category>,List<General.Entities.SysPermission>> 
+﻿@model ValueTuple<General.Entities.SysCategory, List<General.Entities.SysCategory>, List<General.Entities.SysPermission>>
 
 
 <li>
@@ -11,7 +11,7 @@
         {
             <input type="checkbox" name="sysResource" value="@Model.Item1.Id" />
         }
- @Model.Item1.Name
+        @Model.Item1.Name
     </label>
     @if (Model.Item2.Any())
     {
@@ -19,7 +19,8 @@
         <ul>
             @foreach (var child in childNodes)
             {
-                Html.RenderPartial("RenderItem", ValueTuple.Create(child, childNodes, Model.Item3));
+                <partial name="RenderItem" model="ValueTuple.Create(child, childNodes, Model.Item3)" />
+                //Html.RenderPartial("RenderItem", ValueTuple.Create(child, childNodes, Model.Item3));
             }
         </ul>
     }

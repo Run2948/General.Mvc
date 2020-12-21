@@ -65,7 +65,7 @@ namespace General.Mvc.Areas.Admin.Controllers
             ViewBag.ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : Url.RouteUrl("userIndex");
             if (!ModelState.IsValid)
                 return View(model);
-            if (!String.IsNullOrEmpty(model.MobilePhone))
+            if (!string.IsNullOrEmpty(model.MobilePhone))
                 model.MobilePhone = StringUitls.toDBC(model.MobilePhone);
             model.Name = model.Name.Trim();
 

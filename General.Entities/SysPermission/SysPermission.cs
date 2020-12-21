@@ -20,7 +20,7 @@ namespace General.Entities
         public DateTime CreationTime { get; set; }
 
         [ForeignKey("CategoryId")]
-        public virtual Category Category { get; set; }
+        public virtual SysCategory Category { get; set; }
 
         [ForeignKey("RoleId")]
         public virtual SysRole SysRole { get; set; }

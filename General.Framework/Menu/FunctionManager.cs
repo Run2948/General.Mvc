@@ -35,7 +35,7 @@ namespace General.Framework.Menu
                         {
                             foreach (var fun in funAttList)
                             {
-                                if (String.IsNullOrEmpty(fun.SysResource))
+                                if (string.IsNullOrEmpty(fun.SysResource))
                                     fun.SysResource = type.FullName;
                                 father = fun;
                                 result.Add(fun);
@@ -52,12 +52,12 @@ namespace General.Framework.Menu
                                 var funs = m.GetCustomAttributes<FunctionAttribute>(false);
                                 foreach (var fun in funs)
                                 {
-                                    if (String.IsNullOrEmpty(fun.SysResource))
+                                    if (string.IsNullOrEmpty(fun.SysResource))
                                         fun.SysResource = type.FullName + "." + m.Name;
                                     fun.Controller = type.Name.Replace("Controller", "");
                                     fun.Action = m.Name;
                                     //如果父级未指定
-                                    if (String.IsNullOrEmpty(fun.FatherResource))
+                                    if (string.IsNullOrEmpty(fun.FatherResource))
                                         if (father != null)
                                             fun.FatherResource = father.SysResource;
                                     object[] routes = m.GetCustomAttributes(typeof(RouteAttribute), false);

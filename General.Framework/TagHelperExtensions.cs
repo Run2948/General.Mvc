@@ -7,13 +7,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using General.Core;
 using General.Framework.Datatable;
 
 namespace General.Framework
 {
-    //public class TagHelperExtensions : TagHelper
-    //{
-    //}
+    public class TagHelperExtensions : TagHelper
+    {
+
+    }
 
     [HtmlTargetElement("a", Attributes = ClaimAttributeName)]
     [HtmlTargetElement("input")]
@@ -39,7 +41,6 @@ namespace General.Framework
             // output.SuppressOutput();
         }
     }
-
 
     /// <summary>
     /// 分页控件
@@ -72,7 +73,9 @@ namespace General.Framework
                     routeName = ViewContext.ActionDescriptor.AttributeRouteInfo.Name;
             if (routeName == null)
                 return;
-            UrlHelper urlHelper = new UrlHelper(ViewContext);
+            var urlHelperFactory = EnginContext.Current.ResolveScope<IUrlHelperFactory>();
+            // UrlHelper urlHelper = new UrlHelper(ViewContext);
+            var urlHelper = urlHelperFactory.GetUrlHelper(ViewContext);
             //连接地址
             string urlString = urlHelper.RouteUrl(routeName, Paging.RouteArg as object);
             urlString = urlString.Any(o => o == '?') ? urlString + "&page={0}&size={1}" : urlString + "?page={0}&size={1}";
@@ -111,7 +114,7 @@ namespace General.Framework
 
             if (Paging.HasPreviousPage)
             {
-                sb.AppendFormat("<li><a href=\"{0}\">上一页</a></li>", String.Format(urlString, Paging.PageIndex - 1,Paging.PageSize));
+                sb.AppendFormat("<li><a href=\"{0}\">上一页</a></li>", string.Format(urlString, Paging.PageIndex - 1,Paging.PageSize));
             }
             else
             {
@@ -122,12 +125,12 @@ namespace General.Framework
 
             if (Paging.PageIndex > display / 2 + 2)
             {
-                sb.AppendFormat("<li>< a href = \"{0}\" >1</a ></ li>", String.Format(urlString, 1,Paging.PageSize));
+                sb.AppendFormat("<li>< a href = \"{0}\" >1</a ></ li>", string.Format(urlString, 1,Paging.PageSize));
                 sb.Append("<li><a href=\"javascript:\">...</ a ></li>");
             }
             else if (Paging.PageIndex == display / 2 + 2)
             {
-                sb.AppendFormat("<li><a href=\"{0}\">1</a></li>", String.Format(urlString, 1,Paging.PageSize));
+                sb.AppendFormat("<li><a href=\"{0}\">1</a></li>", string.Format(urlString, 1,Paging.PageSize));
             }
             for (int i = minDisplay; i <= maxDisplay; i++)
             {
@@ -137,17 +140,17 @@ namespace General.Framework
                 }
                 else
                 {
-                    sb.AppendFormat("<li><a href = \"{0}\">{1}</ a ></li>", String.Format(urlString, i,Paging.PageSize), i);
+                    sb.AppendFormat("<li><a href = \"{0}\">{1}</ a ></li>", string.Format(urlString, i,Paging.PageSize), i);
                 }
             }
             if (maxDisplay + 1 < Paging.TotalPages)
             {
                 sb.Append("<li><a href=\"javascript:\" >...</ a ></li>");
-                sb.AppendFormat("<li><a href = \"{0}\" >{1}</a></li>", String.Format(urlString, Paging.TotalPages,Paging.PageSize), Paging.TotalPages);
+                sb.AppendFormat("<li><a href = \"{0}\" >{1}</a></li>", string.Format(urlString, Paging.TotalPages,Paging.PageSize), Paging.TotalPages);
             }
             else if (maxDisplay + 1 == Paging.TotalPages)
             {
-                sb.AppendFormat("<li><a href = \"{0}\" >{1}</a></li>", String.Format(urlString, Paging.TotalPages,Paging.PageSize), Paging.TotalPages);
+                sb.AppendFormat("<li><a href = \"{0}\" >{1}</a></li>", string.Format(urlString, Paging.TotalPages,Paging.PageSize), Paging.TotalPages);
             }
 
 
@@ -155,7 +158,7 @@ namespace General.Framework
 
             if (Paging.HasNextPage)
             {
-                sb.AppendFormat("<li class=\"next\"><a href=\"{0}\">下一页</a></li>", String.Format(urlString, Paging.PageIndex + 1, Paging.PageSize));
+                sb.AppendFormat("<li class=\"next\"><a href=\"{0}\">下一页</a></li>", string.Format(urlString, Paging.PageIndex + 1, Paging.PageSize));
             }
             else
             {
@@ -172,10 +175,10 @@ namespace General.Framework
             sb.AppendFormat("每页{0}条 <span class=\"ace-icon fa fa-caret-down icon-on-right\"></span>", Paging.PageSize);
             sb.Append("</button>");
             sb.Append("<ul class=\"dropdown-menu\" role=\"menu\">");
-            sb.AppendFormat("<li><a href=\"{0}\">每页20条</a></li>", String.Format(urlString, Paging.PageIndex, 20));
-            sb.AppendFormat("<li><a href=\"{0}\">每页30条</a></li>", String.Format(urlString, Paging.PageIndex, 30));
-            sb.AppendFormat("<li><a href=\"{0}\">每页50条</a></li>", String.Format(urlString, Paging.PageIndex, 50));
-            sb.AppendFormat("<li><a href=\"{0}\">每页100条</a></li>", String.Format(urlString, Paging.PageIndex, 100));
+            sb.AppendFormat("<li><a href=\"{0}\">每页20条</a></li>", string.Format(urlString, Paging.PageIndex, 20));
+            sb.AppendFormat("<li><a href=\"{0}\">每页30条</a></li>", string.Format(urlString, Paging.PageIndex, 30));
+            sb.AppendFormat("<li><a href=\"{0}\">每页50条</a></li>", string.Format(urlString, Paging.PageIndex, 50));
+            sb.AppendFormat("<li><a href=\"{0}\">每页100条</a></li>", string.Format(urlString, Paging.PageIndex, 100));
             sb.Append("</ul>");
 
             sb.Append("</div>");

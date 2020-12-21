@@ -1,5 +1,4 @@
-﻿using General.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,25 +8,23 @@ using Microsoft.AspNetCore.Http;
 namespace General.Mvc
 {
     /// <summary>
-    /// 
+    /// Autofac依赖注入服务
     /// </summary>
-    public class GeneralEngine : IEngine
+    public class AutofacEngine
     {
-        private readonly ILifetimeScope _lifetimeScope;
-
-        public GeneralEngine(ILifetimeScope lifetimeScope)
-        {
-            this._lifetimeScope = lifetimeScope;
-        }
+        /// <summary>
+        /// Autofac依赖注入静态服务
+        /// </summary>
+        public static ILifetimeScope Container { get; set; }
 
         /// <summary>
         /// 获取服务(Single)
         /// </summary>
         /// <typeparam name="T">接口类型</typeparam>
         /// <returns></returns>
-        public T Resolve<T>() where T : class
+        public static T GetService<T>() where T : class
         {
-            return _lifetimeScope.Resolve<T>();
+            return Container.Resolve<T>();
         }
 
         /// <summary>
@@ -35,9 +32,9 @@ namespace General.Mvc
         /// </summary>
         /// <typeparam name="T">接口类型</typeparam>
         /// <returns></returns>
-        public T ResolveScope<T>() where T : class
+        public static T GetScopeService<T>() where T : class
         {
-            return (T)Resolve<IHttpContextAccessor>().HttpContext.RequestServices.GetService(typeof(T)); ;
+            return (T)GetService<IHttpContextAccessor>().HttpContext.RequestServices.GetService(typeof(T));
         }
     }
 }

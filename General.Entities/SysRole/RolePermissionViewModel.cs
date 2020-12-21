@@ -24,6 +24,6 @@ namespace General.Entities
         /// <summary>
         /// 
         /// </summary>
-        public List<Category> CategoryList { get; set; }
+        public List<SysCategory> CategoryList { get; set; }
     }
 }

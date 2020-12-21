@@ -20,15 +20,12 @@ namespace General.Mvc.Areas.Admin.Controllers
     public class LoginController : AdminAreaController
     {
         private const string R_KEY = "R_KEY";
-        private ISysUserService _sysUserService;
-        private IMemoryCache _memoryCache;
-        private IAdminAuthService _authenticationService;
+        private readonly ISysUserService _sysUserService;
+        private readonly IAdminAuthService _authenticationService;
 
         public LoginController(ISysUserService sysUserService,
-            IAdminAuthService authenticationService,
-            IMemoryCache memoryCache)
+            IAdminAuthService authenticationService)
         {
-            this._memoryCache = memoryCache;
             this._sysUserService = sysUserService;
             this._authenticationService = authenticationService;
         }
@@ -51,18 +48,18 @@ namespace General.Mvc.Areas.Admin.Controllers
         public IActionResult LoginIndex(LoginModel model)
         {
             string r = HttpContext.Session.GetString(R_KEY);
-            r = r ?? "";
+            r ??= "";
             if (!ModelState.IsValid)
             {
                 AjaxData.Message = "请输入用户账号和密码";
                 return Json(AjaxData);
             }
-            var result = _sysUserService.validateUser(model.Account, model.Password, r);
-            AjaxData.Status = result.Item1;
-            AjaxData.Message = result.Item2;
-            if (result.Item1)
+            var (status, message, token, user) = _sysUserService.validateUser(model.Account, model.Password, r);
+            AjaxData.Status = status;
+            AjaxData.Message = message;
+            if (status)
             {
-                _authenticationService.signIn(result.Item3, result.Item4.Name);
+                _authenticationService.SignIn(token, user.Name);
             }
             return Json(AjaxData);
         }
@@ -72,10 +69,10 @@ namespace General.Mvc.Areas.Admin.Controllers
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-        [Route("getSalt",Name = "getSalt")]
-        public IActionResult getSalt(string account)
+        [Route("getSalt", Name = "getSalt")]
+        public IActionResult GetSalt(string account)
         {
-           var user = _sysUserService.getByAccount(account);
+            var user = _sysUserService.getByAccount(account);
             return Content(user?.Salt);
         }
 

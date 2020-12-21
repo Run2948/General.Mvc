@@ -9,9 +9,7 @@ namespace General.Framework
     /// </summary>
     public class AjaxResult
     {
-        
         public bool Status { get; set; }
-
 
         public string Message { get; set; }
     }

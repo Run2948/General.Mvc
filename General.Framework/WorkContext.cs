@@ -11,7 +11,7 @@ namespace General.Framework
 {
     public class WorkContext : IWorkContext
     {
-        private IAdminAuthService _authenticationService;
+        private readonly IAdminAuthService _authenticationService;
 
         public WorkContext(IAdminAuthService authenticationService)
         {
@@ -23,16 +23,16 @@ namespace General.Framework
         /// </summary>
         public SysUser CurrentUser
         {
-            get { return _authenticationService.getCurrentUser(); }
+            get { return _authenticationService.GetCurrentUser(); }
         }
 
         /// <summary>
         /// 当前登录用户菜单
         /// </summary>
-        public List<Category> Categories {
+        public List<SysCategory> Categories {
             get
             {
-              return _authenticationService.getMyCategories();
+              return _authenticationService.GetMyCategories();
             }
         }
     }

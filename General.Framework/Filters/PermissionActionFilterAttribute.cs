@@ -38,7 +38,7 @@ namespace General.Framework.Filters
         /// </summary>
         /// <param name="descriptor"></param>
         /// <returns></returns>
-        private bool getAllowAttributes(ActionExecutingContext descriptor)
+        private bool GetAllowAttributes(ActionExecutingContext descriptor)
         {
             return descriptor.ActionDescriptor.FilterDescriptors.Any(o => o.Filter.GetType().Name.Equals("AllowAnonymousAttribute"));
         }
@@ -49,7 +49,7 @@ namespace General.Framework.Filters
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        private bool isPermissionPageRequested(ActionExecutingContext context)
+        private bool IsPermissionPageRequested(ActionExecutingContext context)
         {
             return context.ActionDescriptor.FilterDescriptors.Any(o => o.Filter.GetType().Name.Equals(this.GetType().Name));
         }
@@ -62,12 +62,12 @@ namespace General.Framework.Filters
         {
             if (_dontValidate)
                 return;
-            if (getAllowAttributes(context))
+            if (GetAllowAttributes(context))
                 return;
-            if (isPermissionPageRequested(context))
+            if (IsPermissionPageRequested(context))
             { 
-                if (!EnginContext.Current.Resolve<IAdminAuthService>().authorize(context))
-                    handleRequest(context);
+                if (!EnginContext.Current.Resolve<IAdminAuthService>().Authorize(context))
+                    HandleRequest(context);
             }
         }
 
@@ -75,7 +75,7 @@ namespace General.Framework.Filters
         /// 处理结果，跳转登录界面
         /// </summary>
         /// <param name="context"></param>
-        private void handleRequest(ActionExecutingContext context)
+        private void HandleRequest(ActionExecutingContext context)
         {
             if (context.HttpContext.Request.IsAjaxRequest())
             {
