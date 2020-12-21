@@ -1,10 +1,5 @@
-﻿@using Microsoft.AspNetCore.Html
-@using General.Framework.Menu
-@using General.Entities
-
-@{
+﻿@{
     var workContext = Html.GetWorkContext();
-
 }
 
 @functions {
@@ -29,11 +24,10 @@
             s += @"<b class='arrow fa fa-angle-down'></b>";
         }
         s += @"</a>";
-        s += @"<b class=aarro></b>";
+        s += @"<b class=arrow></b>";
         if (childNodes.Any())
         {
             s += @"<ul class=submenu>";
-
             foreach (var childItem in childNodes)
             {
                 s += RenderMenuItem(childItem, aa);
@@ -50,15 +44,14 @@
 }
 
 <div id="sidebar" class="sidebar responsive sidebar-fixed">
-
     @{
         List<SysCategory> list = workContext.Categories;
         if (list != null)
         {
             var nodes = list.Where(o => string.IsNullOrEmpty(o.FatherResource)).Where(o => o.IsMenu).OrderBy(o => o.Sort).ThenBy(o => o.Name).ToList();
 
-            <ul class="nav nav-list"> 
-                @if (nodes != null)
+            <ul class="nav nav-list">
+                @if (nodes.Any())
                 {
                     foreach (var item in nodes)
                     {
@@ -81,7 +74,6 @@
     <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
         <i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
     </div>
-
 </div>
 
 

@@ -1,6 +1,4 @@
-﻿@using  General.Framework.Datatable
-@using General.Entities
-@model  DataSourceResult<SysUser,SysUserSearchArg>
+﻿@model  DataSourceResult<SysUser,SysUserSearchArg>
 @{
     ViewData["Title"] = "系统用户列表";
     bool canAddOrUpdate = Html.OwnPermission("editUser");
@@ -60,7 +58,7 @@
                         <th width="150px">活动时间</th>
                         <th width="100px">启用</th>
                         <th width="120px">登录锁</th>
-                        <th width="50px;">密码</th>
+                        <th width="50px">密码</th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -124,7 +122,7 @@
                             <td>
                                 @if (canAddOrUpdate)
                                 {
-                                    <a href="@Url.RouteUrl("deleteUser", new { id = item.Id })" class="btn btn-xs btn-info"><i class="glyphicon glyphicon-trash"></i>修改</a>
+                                    <a href="@Url.RouteUrl("editUser", new { id = item.Id })" class="btn btn-xs btn-info"><i class="glyphicon glyphicon-pencil"></i>修改</a>
                                 }
                                 @if (canDelete)
                                 {
@@ -133,7 +131,6 @@
                                      <a href="@Url.RouteUrl("deleteUser", new { id = item.Id })" class="btn btn-xs btn-danger btnDelete"><i class="glyphicon glyphicon-trash"></i>删除</a>
                                     }
                                 }
-
                             </td>
                         </tr>
                     }

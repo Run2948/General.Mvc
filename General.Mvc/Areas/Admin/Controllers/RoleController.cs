@@ -15,10 +15,9 @@ namespace General.Mvc.Areas.Admin.Controllers
     [Route("admin/role")]
     public class RoleController : AdminPermissionController
     {
-
-        private ISysRoleService _sysRoleService;
-        private ISysPermissionService _sysPermissionService;
-        private ISysCategoryService _sysCategoryService;
+        private readonly ISysRoleService _sysRoleService;
+        private readonly ISysPermissionService _sysPermissionService;
+        private readonly ISysCategoryService _sysCategoryService;
 
         public RoleController(ISysRoleService sysRoleService,
             ISysCategoryService sysCategoryService,
@@ -41,6 +40,7 @@ namespace General.Mvc.Areas.Admin.Controllers
             return View(_sysRoleService.getAllRoles());
         }
 
+
         /// <summary>
         /// 
         /// </summary>
@@ -54,6 +54,8 @@ namespace General.Mvc.Areas.Admin.Controllers
                 model = _sysRoleService.getRole(id.Value);
             return View(model);
         }
+
+
         [Route("edit")]
         [HttpPost]
         public ActionResult EditRole(Entities.SysRole model)
@@ -67,7 +69,7 @@ namespace General.Mvc.Areas.Admin.Controllers
                 model.Id = Guid.NewGuid();
                 model.CreationTime = DateTime.Now;
                 model.Creator = WorkContext.CurrentUser.Id;
-                _sysRoleService.inserRole(model);
+                _sysRoleService.insertRole(model);
             }
             else
             {
@@ -77,6 +79,7 @@ namespace General.Mvc.Areas.Admin.Controllers
             }
             return RedirectToRoute("roleIndex");
         }
+
 
         /// <summary>
         /// 删除角色
@@ -92,6 +95,7 @@ namespace General.Mvc.Areas.Admin.Controllers
             AjaxData.Message = "角色已删除成功";
             return Json(AjaxData);
         }
+
 
         /// <summary>
         /// 角色权限设置
@@ -113,6 +117,7 @@ namespace General.Mvc.Areas.Admin.Controllers
             }
             return View(model);
         }
+
 
         [HttpPost]
         [Route("permission")]

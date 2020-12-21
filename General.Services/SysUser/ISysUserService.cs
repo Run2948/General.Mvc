@@ -86,9 +86,9 @@ namespace General.Services.SysUser
         /// 登录锁与解锁
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="ulock"></param>
+        /// <param name="locked"></param>
         /// <param name="modifer"></param>
-        void loginLock(Guid id, bool ulock, Guid modifer);
+        void loginLock(Guid id, bool locked, Guid modifer);
 
         /// <summary>
         /// 删除用户。无法删除超级用户
@@ -112,7 +112,13 @@ namespace General.Services.SysUser
         void changePassword(Guid id, string password);
 
         /// <summary>
-        /// 设置用户最后多动时间
+        /// 设置用户最后登录时间
+        /// </summary>
+        /// <param name="id"></param>
+        void lastLoginTime(Guid id);
+
+        /// <summary>
+        /// 设置用户最后活动时间
         /// </summary>
         /// <param name="id"></param>
         void lastActivityTime(Guid id);

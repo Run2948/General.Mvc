@@ -26,7 +26,7 @@ namespace General.Services.SysRole
         /// 保存新增角色
         /// </summary>
         /// <param name="role"></param>
-        void inserRole(Entities.SysRole role);
+        void insertRole(Entities.SysRole role);
 
         /// <summary>
         /// 删除角色

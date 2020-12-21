@@ -1,6 +1,5 @@
 ﻿@model ValueTuple<General.Entities.SysCategory, List<General.Entities.SysCategory>, List<General.Entities.SysPermission>>
 
-
 <li>
     <label @(Model.Item3 != null && Model.Item3.Any(o => o.CategoryId == Model.Item1.Id) ? "class=text-danger" : "")>
         @if (Model.Item3 != null && Model.Item3.Any(o => o.CategoryId == Model.Item1.Id))

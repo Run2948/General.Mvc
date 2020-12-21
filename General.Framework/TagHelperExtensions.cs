@@ -108,7 +108,7 @@ namespace General.Framework
 
             sb.Append("<nav><ul class=\"pagination\">");
 
-            sb.AppendFormat("<li class=\"disabled\"><a>当前{0}/{1}页 共{2}条</a></li>", Paging.PageIndex, Paging.TotalPages, Paging.TotalCount);
+            sb.AppendFormat("<li class=\"disabled\"><a>当前{0}/{1}页&nbsp;  &nbsp;共{2}条</a></li>", Paging.PageIndex, Paging.TotalPages, Paging.TotalCount);
 
             #region 上一页
 

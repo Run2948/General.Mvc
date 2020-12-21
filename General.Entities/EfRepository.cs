@@ -9,7 +9,7 @@ namespace General.Entities
 {
     public class EfRepository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        private GeneralDbContext _dbContext;
+        private readonly GeneralDbContext _dbContext;
 
         public EfRepository(GeneralDbContext generalDbContext)
         {

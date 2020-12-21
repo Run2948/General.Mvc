@@ -17,7 +17,7 @@
     <hr />
     <div class="row">
         <div class="col-sm-12">
-            <a asp-route="editRole" class = "btn btn-sm btn-pink "><i class="glyphicon glyphicon-plus"></i>添加角色</a>
+            <a asp-route="editRole" class="btn btn-sm btn-pink "><i class="glyphicon glyphicon-plus"></i>添加角色</a>
         </div>
     </div>
     <div class="space-2"></div>
@@ -37,19 +37,18 @@
                     </thead>
                     <tbody>
                         @foreach (var item in Model)
-                        { 
+                        {
                             <tr>
                                 <td>@(i++)</td>
                                 <td>@item.Name</td>
                                 <td>@item.CreationTime.ToString("F")</td>
-                                <td> 
+                                <td>
                                     <a href="@Url.RouteUrl("editRole",new { id = item.Id })" class="btn btn-xs btn-info"><i class="glyphicon glyphicon-pencil"></i>修改</a>
                                     <a href="@Url.RouteUrl("deleteRole",new { id = item.Id })" class="btn btn-xs btn-danger"><i class="glyphicon glyphicon-trash"></i>删除</a>
-                                    <a href="@Url.RouteUrl("rolePermission",new { id = item.Id })"class = "btn btn-xs btn-purple"><i class="fa fa-bolt"></i>设置权限</a>
+                                    <a href="@Url.RouteUrl("rolePermission",new { id = item.Id })" class="btn btn-xs btn-purple"><i class="fa fa-bolt"></i>设置权限</a>
                                     @*@PermissionRouteLinkIcon("", "editRole", new RouteValueDictionary(new { id = item.Id }), new { @class = "btn btn-xs btn-info", title = "修改" }, new { @class = "glyphicon glyphicon-pencil" })
-                                    @PermissionRouteLinkIcon("", "deleteRole", new RouteValueDictionary(new { id = item.Id }), new { @class = "btn btn-xs btn-danger btnDelete", title = "删除" }, new { @class = "glyphicon glyphicon-trash" })
-                                    @PermissionRouteLinkIcon("权限", "rolePermission", new RouteValueDictionary(new { id = item.Id }), new { @class = "btn btn-xs btn-purple", title = "设置权限" }, new { @class = "fa fa-bolt" })*@
-
+                                        @PermissionRouteLinkIcon("", "deleteRole", new RouteValueDictionary(new { id = item.Id }), new { @class = "btn btn-xs btn-danger btnDelete", title = "删除" }, new { @class = "glyphicon glyphicon-trash" })
+                                        @PermissionRouteLinkIcon("权限", "rolePermission", new RouteValueDictionary(new { id = item.Id }), new { @class = "btn btn-xs btn-purple", title = "设置权限" }, new { @class = "fa fa-bolt" })*@
                                 </td>
                             </tr>
                         }
@@ -57,20 +56,19 @@
                 </table>
             </div>
         </div>
-            <script>
-                $(function () {
-
-                    $(".btnDelete").click(function (e) {
-                        e.preventDefault();
-                        var url = $(this).attr('href');
-                        $.modal.confirm('删除后将不可恢复，您确定要删除此角色？', function () {
-                            $.get(url, function (data) {
-                                $.modal.alert(data);
-                            });
+        <script>
+            $(function () {
+                $(".btnDelete").click(function (e) {
+                    e.preventDefault();
+                    var url = $(this).attr('href');
+                    $.modal.confirm('删除后将不可恢复，您确定要删除此角色？', function () {
+                        $.get(url, function (data) {
+                            $.modal.alert(data);
                         });
                     });
                 });
-            </script>
+            });
+        </script>
     }
 </div>
 

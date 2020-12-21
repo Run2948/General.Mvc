@@ -16,12 +16,13 @@ namespace General.Mvc.Areas.Admin.Controllers
     [Route("admin/users")]
     public class UserController : AdminPermissionController
     {
-        private ISysUserService _sysUserService;
+        private readonly ISysUserService _sysUserService;
 
         public UserController(ISysUserService sysUserService)
         {
             this._sysUserService = sysUserService;
         }
+
 
         /// <summary>
         /// 
@@ -35,7 +36,8 @@ namespace General.Mvc.Areas.Admin.Controllers
             var dataSource = pageList.toDataSourceResult<Entities.SysUser, SysUserSearchArg>("userIndex", arg);
             return View(dataSource);
         }
-         
+
+
         /// <summary>
         /// 编辑用户
         /// </summary>
@@ -44,7 +46,7 @@ namespace General.Mvc.Areas.Admin.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("edit", Name = "editUser")]
-        [Function("编辑系统用户", false, FatherResource = "General.Mvc.Areas.Admin.Controllers.UserController.UserIndex")]
+        [Function("新增、编辑系统用户", false, FatherResource = "General.Mvc.Areas.Admin.Controllers.UserController.UserIndex")]
         public IActionResult EditUser(Guid? id, string returnUrl = null)
         {
             ViewBag.ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : Url.RouteUrl("userIndex");
@@ -56,7 +58,9 @@ namespace General.Mvc.Areas.Admin.Controllers
                 return View(model);
             }
             return View();
-        } 
+        }
+
+
         [HttpPost]
         [Route("edit")]
         public ActionResult EditUser(Entities.SysUser model, string returnUrl = null)
@@ -112,7 +116,7 @@ namespace General.Mvc.Areas.Admin.Controllers
         /// 设置登录锁解锁与锁定
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="enabled"></param>
+        /// <param name="loginLock"></param>
         /// <returns></returns>
         [Route("loginLock", Name = "loginLock")]
         [Function("设置登录锁解锁与锁定", false, FatherResource = "General.Mvc.Areas.Admin.Controllers.UserController.UserIndex")]
@@ -123,6 +127,7 @@ namespace General.Mvc.Areas.Admin.Controllers
             AjaxData.Status = true;
             return Json(AjaxData);
         }
+
 
         /// <summary>
         /// 删除用户
@@ -139,10 +144,10 @@ namespace General.Mvc.Areas.Admin.Controllers
             return Json(AjaxData);
         }
 
+
         /// <summary>
         /// 远程验证账号是否存在
         /// </summary>
-        /// <param name="id"></param>
         /// <param name="account"></param>
         /// <returns></returns>
         [Route("existAccount", Name = "remoteAccount")]
@@ -152,6 +157,7 @@ namespace General.Mvc.Areas.Admin.Controllers
             account = account.Trim();
             return Json(!_sysUserService.existAccount(account));
         }
+
 
         /// <summary>
         /// 重置用户密码

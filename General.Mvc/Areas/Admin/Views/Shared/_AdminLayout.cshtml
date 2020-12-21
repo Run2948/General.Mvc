@@ -69,6 +69,6 @@
     <script src="~/js/jquery.modal.js"></script>
     <script src="~/js/jquery.form.js"></script>
     <script src="~/js/jquery.ajax.setup.js"></script>
-    @RenderSection("scripts", required: false)
+    @await RenderSectionAsync("scripts", required: false)
 </body>
 </html>

@@ -16,10 +16,9 @@ namespace General.Services.SysUser
         private IMemoryCache _memoryCache;
         private const string MODEL_KEY = "General.services.user_{0}";
 
-        private IRepository<Entities.SysUser> _sysUserRepository;
-        private IRepository<Entities.SysUserToken> _sysUserTokenRepository;
-        private IRepository<Entities.SysUserLoginLog> _sysUserLogRepository;
-
+        private readonly IRepository<Entities.SysUser> _sysUserRepository;
+        private readonly IRepository<Entities.SysUserToken> _sysUserTokenRepository;
+        private readonly IRepository<Entities.SysUserLoginLog> _sysUserLogRepository;
 
         public SysUserService(IRepository<Entities.SysUser> sysUserRepository,
             IRepository<Entities.SysUserToken> sysUserTokenRepository,
@@ -137,10 +136,9 @@ namespace General.Services.SysUser
         /// <returns></returns>
         public Entities.SysUser getLogged(string token)
         {
-            Entities.SysUserToken userToken = null;
             Entities.SysUser sysUser = null;
 
-            _memoryCache.TryGetValue<Entities.SysUserToken>(token, out userToken);
+            _memoryCache.TryGetValue<Entities.SysUserToken>(token, out var userToken);
             if (userToken != null)
             {
                 _memoryCache.TryGetValue(string.Format(MODEL_KEY, userToken.SysUserId), out sysUser);
@@ -213,7 +211,7 @@ namespace General.Services.SysUser
         /// 更新修改
         /// </summary>
         /// <param name="model"></param>
-        void updateSysUser(Entities.SysUser model)
+        public void updateSysUser(Entities.SysUser model)
         {
             _sysUserRepository.DbContext.Entry(model).State = EntityState.Unchanged;
             _sysUserRepository.DbContext.Entry(model).Property("Name").IsModified = true;
@@ -230,13 +228,15 @@ namespace General.Services.SysUser
         /// <param name="modifer"></param>
         public void resetPassword(Guid id, Guid modifer)
         {
-
+            var sysUser = _sysUserRepository.getById(id);
+            sysUser.Password = EncryptorHelper.GetMD5(sysUser.Account + sysUser.Salt);
+            sysUser.Modifier = modifer;
+            _sysUserRepository.update(sysUser);
         }
 
         /// <summary>
         /// 验证账号是否已经存在
         /// </summary>
-        /// <param name="id"></param>
         /// <param name="account"></param>
         /// <returns></returns>
         public bool existAccount(string account)
@@ -244,48 +244,98 @@ namespace General.Services.SysUser
             return _sysUserRepository.Table.Any(o => o.Account == account && !o.IsDeleted);
         }
 
-        void ISysUserService.updateSysUser(Entities.SysUser model)
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        /// 启用禁用账号
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="enabled"></param>
+        /// <param name="modifer"></param>
         public void enabled(Guid id, bool enabled, Guid modifer)
         {
-            throw new NotImplementedException();
-        }
-
-        public void loginLock(Guid id, bool ulock, Guid modifer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void deleteUser(Guid id, Guid modifer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void addAvatar(Guid id, byte[] avatar)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void changePassword(Guid id, string password)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void lastActivityTime(Guid id)
-        {
-            throw new NotImplementedException();
+            var sysUser = _sysUserRepository.getById(id);
+            if (sysUser.IsAdmin) return;
+            sysUser.Enabled = enabled;
+            sysUser.Modifier = modifer;
+            _sysUserRepository.update(sysUser);
         }
 
         /// <summary>
-        /// 移除缓存用户
+        /// 登录锁与解锁
         /// </summary>
-        /// <param name="userId"></param>
-        private void removeCacheUser(Guid userId)
+        /// <param name="id"></param>
+        /// <param name="locked"></param>
+        /// <param name="modifer"></param>
+        public void loginLock(Guid id, bool locked, Guid modifer)
         {
-            _memoryCache.Remove(string.Format(MODEL_KEY, userId));
+            var sysUser = _sysUserRepository.getById(id);
+            if (sysUser.IsAdmin) return;
+            sysUser.LoginLock = locked;
+            sysUser.Modifier = modifer;
+            _sysUserRepository.update(sysUser);
+        }
+
+        /// <summary>
+        /// 删除用户。无法删除超级用户
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="modifer"></param>
+        public void deleteUser(Guid id, Guid modifer)
+        {
+            var sysUser = _sysUserRepository.getById(id);
+            if (sysUser.IsAdmin) return;
+            sysUser.IsDeleted = true;
+            sysUser.Modifier = modifer;
+            _sysUserRepository.update(sysUser);
+        }
+
+        /// <summary>
+        /// 添加用户头像
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="avatar"></param>
+        public void addAvatar(Guid id, byte[] avatar)
+        {
+            var sysUser = _sysUserRepository.getById(id);
+            sysUser.Avatar = avatar;
+            sysUser.Modifier = sysUser.Id;
+            _sysUserRepository.update(sysUser);
+        }
+
+        /// <summary>
+        /// 用户自己修改密码
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="password"></param>
+        public void changePassword(Guid id, string password)
+        {
+            var sysUser = _sysUserRepository.getById(id);
+            sysUser.Password = EncryptorHelper.GetMD5(password + sysUser.Salt);
+            sysUser.Modifier = sysUser.Id;
+            _sysUserRepository.update(sysUser);
+        }
+
+        /// <summary>
+        /// 设置用户最后活动时间
+        /// </summary>
+        /// <param name="id"></param>
+        public void lastLoginTime(Guid id)
+        {
+            var sysUser = _sysUserRepository.getById(id);
+            sysUser.LastLoginTime = DateTime.Now;
+            sysUser.Modifier = sysUser.Id;
+            _sysUserRepository.update(sysUser);
+        }
+
+        /// <summary>
+        /// 设置用户最后活动时间
+        /// </summary>
+        /// <param name="id"></param>
+        public void lastActivityTime(Guid id)
+        {
+            var sysUser = _sysUserRepository.getById(id);
+            sysUser.LastActivityTime = DateTime.Now;
+            sysUser.Modifier = sysUser.Id;
+            _sysUserRepository.update(sysUser);
         }
     }
 }

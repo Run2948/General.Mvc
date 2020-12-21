@@ -14,27 +14,28 @@ namespace General.Services.SysRole
     public class SysRoleService : ISysRoleService
     {
         private const string MODEL_KEY = "General.services.role_all";
-        private IMemoryCache _memoryCache;
-        private IRepository<Entities.SysRole> _sysRoleRepository;
-        private IRepository<Entities.SysUserRole> _sysUserRoleRepository;
-        private IRepository<Entities.SysPermission> _sysPermissionRepository;
-        private ISysPermissionService _sysPermissionServices;
-        private ISysUserRoleService _sysUserRoleService;
+        private readonly IMemoryCache _memoryCache;
+        private readonly IRepository<Entities.SysRole> _sysRoleRepository;
+        private readonly IRepository<Entities.SysUserRole> _sysUserRoleRepository;
+        private readonly IRepository<Entities.SysPermission> _sysPermissionRepository;
+        private readonly ISysPermissionService _sysPermissionService;
+        private readonly ISysUserRoleService _sysUserRoleService;
 
         public SysRoleService(IMemoryCache memoryCache,
              ISysUserRoleService sysUserRoleService,
              IRepository<Entities.SysRole> sysRoleRepository,
              IRepository<Entities.SysUserRole> sysUserRoleRepository,
-             ISysPermissionService sysPermissionServices,
+             ISysPermissionService sysPermissionService,
              IRepository<Entities.SysPermission> sysPermissionRepository)
         {
             this._sysUserRoleService = sysUserRoleService;
-            this._sysPermissionServices = sysPermissionServices;
+            this._sysPermissionService = sysPermissionService;
             this._memoryCache = memoryCache;
             this._sysRoleRepository = sysRoleRepository;
             this._sysUserRoleRepository = sysUserRoleRepository;
             this._sysPermissionRepository = sysPermissionRepository;
         }
+
 
         /// <summary>
         /// 删除角色
@@ -51,9 +52,10 @@ namespace General.Services.SysRole
                 _sysUserRoleRepository.Entities.Remove(del);
             _sysRoleRepository.delete(item);
             _memoryCache.Remove(MODEL_KEY);
-            _sysPermissionServices.removeCache();
+            _sysPermissionService.removeCache();
             _sysUserRoleService.removeCache();
         }
+
 
         /// <summary>
         /// 获取所有的roles数据
@@ -62,11 +64,10 @@ namespace General.Services.SysRole
         /// <returns></returns>
         public List<Entities.SysRole> getAllRoles()
         {
-            List<Entities.SysRole> list = null;
-            _memoryCache.TryGetValue<List<Entities.SysRole>>(MODEL_KEY, out list);
+            _memoryCache.TryGetValue<List<Entities.SysRole>>(MODEL_KEY, out var list);
             if (list != null)
                 return list;
-             list = _sysRoleRepository.Table.ToList();
+            list = _sysRoleRepository.Table.ToList();
             _memoryCache.Set(MODEL_KEY, list, DateTimeOffset.Now.AddDays(1));
             return list;
         }
@@ -76,11 +77,12 @@ namespace General.Services.SysRole
         /// 新增角色
         /// </summary>
         /// <param name="role"></param>
-        public void inserRole(Entities.SysRole role)
+        public void insertRole(Entities.SysRole role)
         {
             _sysRoleRepository.insert(role);
             _memoryCache.Remove(MODEL_KEY);
         }
+
 
         /// <summary>
         /// 修改角色
@@ -98,6 +100,7 @@ namespace General.Services.SysRole
             _memoryCache.Remove(MODEL_KEY);
         }
 
+
         /// <summary>
         /// 获取角色详情
         /// </summary>
@@ -107,7 +110,6 @@ namespace General.Services.SysRole
         {
             return _sysRoleRepository.getById(id);
         }
-         
 
     }
 }

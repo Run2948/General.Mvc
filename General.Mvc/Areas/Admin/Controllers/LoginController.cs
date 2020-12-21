@@ -30,6 +30,7 @@ namespace General.Mvc.Areas.Admin.Controllers
             this._authenticationService = authenticationService;
         }
 
+
         /// <summary>
         /// Session
         /// </summary>
@@ -42,6 +43,7 @@ namespace General.Mvc.Areas.Admin.Controllers
             LoginModel loginModel = new LoginModel() { R = r };
             return View(loginModel);
         }
+
 
         [HttpPost]
         [Route("login")]
@@ -64,6 +66,7 @@ namespace General.Mvc.Areas.Admin.Controllers
             return Json(AjaxData);
         }
 
+
         /// <summary>
         /// 
         /// </summary>
@@ -75,6 +78,5 @@ namespace General.Mvc.Areas.Admin.Controllers
             var user = _sysUserService.getByAccount(account);
             return Content(user?.Salt);
         }
-
     }
 }
